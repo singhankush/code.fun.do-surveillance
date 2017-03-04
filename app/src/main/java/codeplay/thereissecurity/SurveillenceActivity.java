@@ -3,6 +3,7 @@ package codeplay.thereissecurity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.Camera;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
@@ -15,6 +16,16 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import java.io.IOException;
+import java.util.List;
+
+import clarifai2.api.ClarifaiClient;
+import clarifai2.api.ClarifaiResponse;
+import clarifai2.api.ClarifaiUtil;
+import clarifai2.dto.input.ClarifaiInput;
+import clarifai2.dto.input.image.ClarifaiImage;
+import clarifai2.dto.model.ConceptModel;
+import clarifai2.dto.model.output.ClarifaiOutput;
+import clarifai2.dto.prediction.Concept;
 
 
 public class SurveillenceActivity extends ActionBarActivity {
@@ -29,12 +40,16 @@ public class SurveillenceActivity extends ActionBarActivity {
     SurfaceView surfaceView;
     Camera.PictureCallback callback;
     SurfaceHolder holder;
+    ClarifaiClient client;
+    ConceptModel model;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_surveillence);
         handler=new Handler();
+        client=MainActivity.getClient();
+        model=client.getDefaultModels().generalModel();
         imageView= (ImageView) findViewById(R.id.captured_image);
         surfaceView= (SurfaceView) findViewById(R.id.camera_view);
         holder=surfaceView.getHolder();
@@ -45,6 +60,7 @@ public class SurveillenceActivity extends ActionBarActivity {
                 camera.stopPreview();
                 Bitmap bitmap=BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                 imageView.setImageBitmap(bitmap);
+                processImage(bytes);
             }
         };
         Button stop= (Button) findViewById(R.id.stop_survey);
@@ -110,36 +126,33 @@ public class SurveillenceActivity extends ActionBarActivity {
         });
         //handler.postDelayed(runnable, delay);
     }
-    public void capture(){
+    public void processImage(byte[] bytes){
+        new AsyncTask<byte[], Void, ClarifaiResponse<List<ClarifaiOutput<Concept>>>>() {
 
-    }
 
-    /*public void capture() {
-
-        if (camera != null) {
-            try {
-
-                camera.setPreviewDisplay(holder);
-                camera.startPreview();
-                camera.takePicture(null, null, callback);
-            } catch (IOException e) {
-                e.printStackTrace();
+            @Override
+            protected ClarifaiResponse<List<ClarifaiOutput<Concept>>> doInBackground(byte[]... params) {
+                // Use this model to predict, with the image that the user just selected as the input
+                return model.predict()
+                        .withInputs(ClarifaiInput.forImage(ClarifaiImage.of(params[0])))
+                        .executeSync();
             }
-            //camera.stopPreview();
-        }
-        else
-            close();
-    }*/
 
-/*    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data){
-        if (requestCode==CAMERA_REQUEST && resultCode== Activity.RESULT_OK){
-            count++;
-            Bitmap photo= (Bitmap) data.getExtras().get("data");
-            imageView.setImageBitmap(photo);
-        }
+            @Override
+            protected void onPostExecute(ClarifaiResponse<List<ClarifaiOutput<Concept>>> response) {
+                if (!response.isSuccessful()) {
+                    return;
+                }
+                final List<ClarifaiOutput<Concept>> predictions = response.get();
+                if (predictions.isEmpty()) {
+                    return;
+                }
+
+            }
+
+        }.execute(bytes);
     }
-*/
+
     public void close(){
         if (camera!=null)
             camera.release();

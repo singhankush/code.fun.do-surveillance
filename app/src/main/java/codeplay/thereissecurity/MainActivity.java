@@ -10,7 +10,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import java.util.concurrent.TimeUnit;
+
+import clarifai2.api.ClarifaiBuilder;
 import clarifai2.api.ClarifaiClient;
+import clarifai2.api.ClarifaiUtil;
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import timber.log.Timber;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -32,7 +39,7 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        /*client=new ClarifaiBuilder(getString(R.string.client_id),getString(R.string.client_secret))
+        client=new ClarifaiBuilder(getString(R.string.client_id),getString(R.string.client_secret))
                 .client(new OkHttpClient.Builder()
                         .readTimeout(30, TimeUnit.SECONDS)
                         .addInterceptor(new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger(){
@@ -44,7 +51,7 @@ public class MainActivity extends ActionBarActivity {
                         .build())
                 .buildSync();
 
-        Timber.plant(new Timber.DebugTree());*/
+        Timber.plant(new Timber.DebugTree());
 
         Button bt= (Button) findViewById(R.id.start_survey);
         bt.setOnClickListener(new View.OnClickListener() {
