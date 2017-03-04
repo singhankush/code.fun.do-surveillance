@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
@@ -27,6 +28,7 @@ public class SurveillenceActivity extends ActionBarActivity {
     Camera camera;
     SurfaceView surfaceView;
     Camera.PictureCallback callback;
+    SurfaceHolder holder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +36,8 @@ public class SurveillenceActivity extends ActionBarActivity {
         setContentView(R.layout.activity_surveillence);
         handler=new Handler();
         imageView= (ImageView) findViewById(R.id.captured_image);
-        surfaceView=new SurfaceView(this);
+        surfaceView= (SurfaceView) findViewById(R.id.camera_view);
+        holder=surfaceView.getHolder();
         camera=Camera.open();
         callback=new Camera.PictureCallback() {
             @Override
@@ -52,35 +55,73 @@ public class SurveillenceActivity extends ActionBarActivity {
                 close();
             }
         });
-        runnable=new Runnable() {
+        runnable= new Runnable() {
             @Override
             public void run() {
-                if (!interrupt) {
-                    capture();
-                    handler.postDelayed(this, delay);
+                if (holder.getSurface() == null) {
+                    // preview surface does not exist
+                    return;
                 }
-                else
-                    close();
+
+                // stop preview before making changes
+                try {
+                    camera.stopPreview();
+                } catch (Exception e) {
+                    // ignore: tried to stop a non-existent preview
+                }
+
+                // set preview size and make any resize, rotate or
+                // reformatting changes here
+
+                // start preview with new settings
+                try {
+                    camera.setPreviewDisplay(holder);
+                    camera.setDisplayOrientation(90);
+                    camera.startPreview();
+                    camera.takePicture(null, null, callback);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                handler.postDelayed(this,delay);
             }
         };
+        holder.addCallback(new SurfaceHolder.Callback() {
+            @Override
+            public void surfaceCreated(SurfaceHolder surfaceHolder) {
+                /*try {
+                    camera.setPreviewDisplay(holder);
+                    camera.startPreview();
+                    capture();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }*/
+            }
 
-        handler.postDelayed(runnable, delay);
+            @Override
+            public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
+                runnable.run();
+                //handler.postDelayed(runnable,delay);
+            }
+
+            @Override
+            public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
+
+            }
+        });
+        //handler.postDelayed(runnable, delay);
+    }
+    public void capture(){
+
     }
 
-    public void capture() {
+    /*public void capture() {
 
         if (camera != null) {
             try {
-                camera.setOneShotPreviewCallback(new Camera.PreviewCallback() {
-                    @Override
-                    public void onPreviewFrame(byte[] bytes, Camera camera) {
-                        camera.takePicture(null, null, callback);
-                    }
-                });
 
-                camera.setPreviewDisplay(surfaceView.getHolder());
+                camera.setPreviewDisplay(holder);
                 camera.startPreview();
-                //camera.takePicture(null,null,callback);
+                camera.takePicture(null, null, callback);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -88,7 +129,7 @@ public class SurveillenceActivity extends ActionBarActivity {
         }
         else
             close();
-    }
+    }*/
 
 /*    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
