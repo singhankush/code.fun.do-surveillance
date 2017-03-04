@@ -24,7 +24,7 @@ public class SurveillenceActivity extends ActionBarActivity {
     private Runnable runnable;
     boolean interrupt=false;
     public static int count=0;
-    final int delay=8000;
+    final int delay=20000;
     Camera camera;
     SurfaceView surfaceView;
     Camera.PictureCallback callback;
