@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SurfaceHolder;
@@ -20,7 +21,6 @@ import java.util.List;
 
 import clarifai2.api.ClarifaiClient;
 import clarifai2.api.ClarifaiResponse;
-import clarifai2.api.ClarifaiUtil;
 import clarifai2.dto.input.ClarifaiInput;
 import clarifai2.dto.input.image.ClarifaiImage;
 import clarifai2.dto.model.ConceptModel;
@@ -42,6 +42,7 @@ public class SurveillenceActivity extends ActionBarActivity {
     SurfaceHolder holder;
     ClarifaiClient client;
     ConceptModel model;
+    int attributesCount=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,9 +58,11 @@ public class SurveillenceActivity extends ActionBarActivity {
         callback=new Camera.PictureCallback() {
             @Override
             public void onPictureTaken(byte[] bytes, Camera camera) {
-                camera.stopPreview();
-                Bitmap bitmap=BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                imageView.setImageBitmap(bitmap);
+                //camera.stopPreview();
+
+                Bitmap bitmap= BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                //imageView.setImageBitmap(bitmap);
+                //imageView.invalidate();
                 processImage(bytes);
             }
         };
@@ -104,27 +107,21 @@ public class SurveillenceActivity extends ActionBarActivity {
         holder.addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder surfaceHolder) {
-                /*try {
-                    camera.setPreviewDisplay(holder);
-                    camera.startPreview();
-                    capture();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }*/
             }
 
             @Override
             public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
                 runnable.run();
-                //handler.postDelayed(runnable,delay);
             }
 
             @Override
             public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
-
+                if (camera!=null)
+                    camera.stopPreview();
             }
         });
         //handler.postDelayed(runnable, delay);
+
     }
     public void processImage(byte[] bytes){
         new AsyncTask<byte[], Void, ClarifaiResponse<List<ClarifaiOutput<Concept>>>>() {
@@ -148,9 +145,22 @@ public class SurveillenceActivity extends ActionBarActivity {
                     return;
                 }
 
+                for(ClarifaiOutput<Concept> output:predictions){
+                    for(Concept c:output.data() ){
+                        int i=Detection.check(c.name());
+                        if (i>=2) {
+                            attributesCount+=i;
+                            Log.i("Name:Confidence", c.name() + ":" + c.value());
+                        }
+                    }
+                }
+                if (attributesCount>=5){
+                    attributesCount=0;
+                    Detection.notify_detected();
+                }
             }
 
-        }.execute(bytes);
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, bytes);
     }
 
     public void close(){
