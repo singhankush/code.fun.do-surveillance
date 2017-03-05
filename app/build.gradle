@@ -17,6 +17,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    lintOptions { lintConfig rootProject.file('gradle/lint.xml') } // needed to suppress Okio's lint errors
 }
 
 dependencies {
@@ -25,4 +26,19 @@ dependencies {
     compile 'com.android.support:support-v4:25.1.0'
     compile 'com.android.support:design:25.0.0'
     compile 'com.clarifai.clarifai-api2:core:2.0.2'
+    compile 'com.squareup.okhttp3:okhttp:3.6.0'
+    // For logging our HTTP outbound + inbound data
+    compile "com.jakewharton.timber:timber:4.3.0"
+    compile "com.squareup.okhttp3:logging-interceptor:3.6.0"
+
+    // For runtime permissions on Marshmallow and above
+    compile "io.reactivex:rxjava:1.1.10"
+    compile "com.tbruyelle.rxpermissions:rxpermissions:0.7.1@aar"
+
+    // Retrofit
+    compile 'com.squareup.retrofit2:retrofit:2.1.0'
+
+// JSON Parsing
+    compile 'com.google.code.gson:gson:2.6.1'
+    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
 }
