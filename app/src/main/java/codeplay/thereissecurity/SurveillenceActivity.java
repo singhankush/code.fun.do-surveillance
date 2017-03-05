@@ -1,7 +1,5 @@
 package codeplay.thereissecurity;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -15,6 +13,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.List;
@@ -60,7 +59,7 @@ public class SurveillenceActivity extends ActionBarActivity {
             public void onPictureTaken(byte[] bytes, Camera camera) {
                 //camera.stopPreview();
 
-                Bitmap bitmap= BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                //Bitmap bitmap= BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                 //imageView.setImageBitmap(bitmap);
                 //imageView.invalidate();
                 processImage(bytes);
@@ -148,13 +147,14 @@ public class SurveillenceActivity extends ActionBarActivity {
                 for(ClarifaiOutput<Concept> output:predictions){
                     for(Concept c:output.data() ){
                         int i=Detection.check(c.name());
-                        if (i>=1) {
+                        if (i>=2) {
+                            Toast.makeText(SurveillenceActivity.this,"Image Matched",Toast.LENGTH_SHORT).show();
                             attributesCount+=i;
                             Log.i("Name:Confidence", c.name() + ":" + c.value());
                         }
                     }
                 }
-                if (attributesCount>=1){
+                if (attributesCount>=0){
                     attributesCount=0;
                     Detection.notify_detected(SurveillenceActivity.this);
                 }
