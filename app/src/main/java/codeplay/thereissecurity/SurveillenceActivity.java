@@ -35,7 +35,7 @@ public class SurveillenceActivity extends ActionBarActivity {
     private Runnable runnable;
     boolean interrupt=false;
     public static int count=0;
-    final int delay=20000;
+    final int delay=5000;
     Camera camera;
     SurfaceView surfaceView;
     Camera.PictureCallback callback;
@@ -148,15 +148,15 @@ public class SurveillenceActivity extends ActionBarActivity {
                 for(ClarifaiOutput<Concept> output:predictions){
                     for(Concept c:output.data() ){
                         int i=Detection.check(c.name());
-                        if (i>=2) {
+                        if (i>=1) {
                             attributesCount+=i;
                             Log.i("Name:Confidence", c.name() + ":" + c.value());
                         }
                     }
                 }
-                if (attributesCount>=5){
+                if (attributesCount>=1){
                     attributesCount=0;
-                    Detection.notify_detected();
+                    Detection.notify_detected(SurveillenceActivity.this);
                 }
             }
 

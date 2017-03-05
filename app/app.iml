@@ -101,8 +101,10 @@
     <orderEntry type="jdk" jdkName="Android API 25 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="support-annotations-25.1.0" level="project" />
+    <orderEntry type="library" exported="" name="additionnal" level="project" />
     <orderEntry type="library" exported="" name="design-25.0.0" level="project" />
     <orderEntry type="library" exported="" name="core-2.0.2" level="project" />
+    <orderEntry type="library" exported="" name="mail" level="project" />
     <orderEntry type="library" exported="" name="rxpermissions-0.7.1" level="project" />
     <orderEntry type="library" exported="" name="rxjava-1.1.10" level="project" />
     <orderEntry type="library" exported="" name="gson-2.7" level="project" />
@@ -119,6 +121,7 @@
     <orderEntry type="library" exported="" name="timber-4.3.0" level="project" />
     <orderEntry type="library" exported="" name="support-vector-drawable-25.1.0" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-25.1.0" level="project" />
+    <orderEntry type="library" exported="" name="activation" level="project" />
     <orderEntry type="library" exported="" name="recyclerview-v7-25.0.0" level="project" />
     <orderEntry type="library" exported="" name="support-core-utils-25.1.0" level="project" />
   </component>

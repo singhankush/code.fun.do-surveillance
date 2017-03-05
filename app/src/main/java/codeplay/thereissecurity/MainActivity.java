@@ -45,7 +45,7 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         client=new ClarifaiBuilder(getString(R.string.client_id),getString(R.string.client_secret))
                 .client(new OkHttpClient.Builder()
-                        .readTimeout(20, TimeUnit.SECONDS)
+                        .readTimeout(30, TimeUnit.SECONDS)
                         .addInterceptor(new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger(){
                             @Override
                             public void log(String message) {

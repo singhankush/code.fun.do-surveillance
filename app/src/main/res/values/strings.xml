@@ -7,4 +7,5 @@
     <string name="client_id">KU4yIF-RRI_I_mGjzdVqd8Gd780HFSsYz98VXKGq</string>
     <string name="client_secret">CDzJI7PRBSsYIFyNVi8q6jbzXh8DxEbgN_3QMaNE</string>
     <string name="title_activity_surveillence">SurveillenceActivity</string>
+    <string name="title_activity_mail_sender">MailSenderActivity</string>
 </resources>
