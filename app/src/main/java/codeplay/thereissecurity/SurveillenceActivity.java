@@ -147,14 +147,18 @@ public class SurveillenceActivity extends ActionBarActivity {
                 for(ClarifaiOutput<Concept> output:predictions){
                     for(Concept c:output.data() ){
                         int i=Detection.check(c.name());
-                        if (i>=2) {
-                            Toast.makeText(SurveillenceActivity.this,"Image Matched",Toast.LENGTH_SHORT).show();
+                        if (i>0) {
+                            try {
+                                Toast.makeText(SurveillenceActivity.this, "Image Matched", Toast.LENGTH_SHORT).show();
+                            }catch (Exception e){
+
+                            }
                             attributesCount+=i;
                             Log.i("Name:Confidence", c.name() + ":" + c.value());
                         }
                     }
                 }
-                if (attributesCount>=0){
+                if (attributesCount>=2){
                     attributesCount=0;
                     Detection.notify_detected(SurveillenceActivity.this);
                 }

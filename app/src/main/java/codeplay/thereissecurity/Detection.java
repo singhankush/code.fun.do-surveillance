@@ -105,7 +105,11 @@ public final class Detection {
 
         @Override
         public void onPostExecute(Object result) {
-            Toast.makeText(Detection.context,"Mail Sent",Toast.LENGTH_SHORT).show();
+            try {
+                Toast.makeText(Detection.context, "Mail Sent", Toast.LENGTH_SHORT).show();
+            }catch (Exception e){
+
+            }
         }
 
     }
