@@ -33,7 +33,6 @@ public class SurveillenceActivity extends ActionBarActivity {
     private Handler handler;
     private Runnable runnable;
     boolean interrupt=false;
-    public static int count=0;
     final int delay=5000;
     Camera camera;
     SurfaceView surfaceView;
@@ -42,6 +41,7 @@ public class SurveillenceActivity extends ActionBarActivity {
     ClarifaiClient client;
     ConceptModel model;
     int attributesCount=0;
+    int count=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,6 +144,7 @@ public class SurveillenceActivity extends ActionBarActivity {
                     return;
                 }
 
+                count++;
                 for(ClarifaiOutput<Concept> output:predictions){
                     for(Concept c:output.data() ){
                         int i=Detection.check(c.name());
@@ -153,13 +154,14 @@ public class SurveillenceActivity extends ActionBarActivity {
                             }catch (Exception e){
 
                             }
-                            attributesCount+=i;
+                            attributesCount++;
                             Log.i("Name:Confidence", c.name() + ":" + c.value());
                         }
                     }
                 }
-                if (attributesCount>=2){
+                if (attributesCount>=1){
                     attributesCount=0;
+                    count=0;
                     Detection.notify_detected(SurveillenceActivity.this);
                 }
             }
